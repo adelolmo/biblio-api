@@ -1,0 +1,33 @@
+server:
+  requestLog:
+    appenders: []
+
+  applicationConnectors:
+    - type: http
+      port: 8090
+  adminConnectors:
+    - type: http
+      port: 8091
+
+database:
+  driverClass: org.postgresql.Driver
+  user: biblio
+  password: biblio
+  url: jdbc:postgresql://localhost:5432/biblio
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 2s
+  validationQuery: "/* theseus Health Check */ SELECT 1"
+  validationQueryTimeout: 3s
+  minSize: 5
+  maxSize: 15
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+logging:
+  level: WARN
+  loggers:
+    de.digitalperformance: INFO
+  appenders:
+    - type: console
+      logFormat: '%date{ISO8601} %-5level[%thread] %logger{10} %m%n'
