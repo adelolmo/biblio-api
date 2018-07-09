@@ -22,6 +22,7 @@ import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
 import org.ado.biblio.sessions.SessionResource
+import org.ado.biblio.users.DefaultPasswordHasher
 import org.ado.biblio.users.UserDao
 import org.ado.biblio.users.UserResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
@@ -42,10 +43,6 @@ class Application : io.dropwizard.Application<Configuration>() {
         bootstrap.addBundle(object : MigrationsBundle<Configuration>() {
             override fun getDataSourceFactory(conf: Configuration): PooledDataSourceFactory {
                 return conf.dataSourceFactory
-            }
-
-            override fun getMigrationsFileName(): String {
-                return "migrations.xml"
             }
         })
         bootstrap.addBundle(ObjectMapperBundle())
@@ -72,8 +69,9 @@ class Application : io.dropwizard.Application<Configuration>() {
         environment.jersey().register(RolesAllowedDynamicFeature::class.java)
         environment.jersey().register(AuthValueFactoryProvider.Binder<ApiUser>(ApiUser::class.java))
 
-        environment.jersey().register(UserResource(userDao, clock))
-        environment.jersey().register(SessionResource(sessionDao, userDao, clock))
+        val passwordHasher = DefaultPasswordHasher()
+        environment.jersey().register(UserResource(userDao, clock, passwordHasher))
+        environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
         environment.jersey().register(BookResource(bookDao, clock))
         environment.jersey().register(BooksResource(bookDao))
         environment.jersey().register(LendResource(library, bookDao))

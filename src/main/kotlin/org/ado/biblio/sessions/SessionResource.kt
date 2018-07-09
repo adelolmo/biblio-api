@@ -1,6 +1,6 @@
 package org.ado.biblio.sessions
 
-import org.ado.biblio.users.Passwords
+import org.ado.biblio.users.PasswordHasher
 import org.ado.biblio.users.UserDao
 import org.hibernate.validator.constraints.NotEmpty
 import java.time.Clock
@@ -17,7 +17,7 @@ import javax.ws.rs.core.UriBuilder
 @Path("/sessions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class SessionResource(val sessionDao: SessionDao, val userDao: UserDao, val clock: Clock) {
+class SessionResource(val sessionDao: SessionDao, val userDao: UserDao, val clock: Clock, val passwordHasher: PasswordHasher) {
 
     @GET
     @Path("{id}")
@@ -32,7 +32,7 @@ class SessionResource(val sessionDao: SessionDao, val userDao: UserDao, val cloc
             throw NotFoundException("user not found")
         }
         val user = userDao.get(sessionDto.username) ?: throw NotFoundException("user not found")
-        if (!userDao.validate(sessionDto.username, Passwords.encode(sessionDto.password, user.salt))) {
+        if (!userDao.validate(sessionDto.username, passwordHasher.encode(sessionDto.password, user.salt))) {
             throw NotFoundException("wrong credentials")
         }
 

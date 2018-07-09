@@ -12,7 +12,11 @@ import javax.ws.rs.core.Response
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class UserResource(private val userDao: UserDao, private val clock: Clock) {
+class UserResource(
+        private val userDao: UserDao,
+        private val clock: Clock,
+        private val passwordHasher: PasswordHasher
+) {
 
     @POST
     fun add(@Valid @NotNull user: UserDto): Response {
@@ -20,7 +24,7 @@ class UserResource(private val userDao: UserDao, private val clock: Clock) {
             throw NotFoundException("user already exists")
         }
 
-        val passwordHashed = Passwords.encode(user.password)
+        val passwordHashed = passwordHasher.encode(user.password)
         userDao.add(User(
                 user.username,
                 passwordHashed.encodedPassword,
