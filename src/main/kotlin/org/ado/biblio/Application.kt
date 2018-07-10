@@ -52,12 +52,13 @@ class Application : io.dropwizard.Application<Configuration>() {
         val clock = Clock.systemUTC()
 
         val dbi = DBIFactory().build(environment, configuration.dataSourceFactory, "$name-db")
-        val bookDao = dbi.onDemand(BookDao::class.java)
         val userDao = dbi.onDemand(UserDao::class.java)
         val sessionDao = dbi.onDemand(SessionDao::class.java)
+        val bookDao = dbi.onDemand(BookDao::class.java)
         val lendDao = dbi.onDemand(LendDao::class.java)
 
-        val library = Library(bookDao, userDao, lendDao, clock)
+        val passwordHasher = DefaultPasswordHasher()
+        val library = Library(lendDao, bookDao, clock)
 
         environment.jersey().register(AuthDynamicFeature(
                 ApiUserAuthFilter.Builder<ApiUser>()
@@ -69,12 +70,11 @@ class Application : io.dropwizard.Application<Configuration>() {
         environment.jersey().register(RolesAllowedDynamicFeature::class.java)
         environment.jersey().register(AuthValueFactoryProvider.Binder<ApiUser>(ApiUser::class.java))
 
-        val passwordHasher = DefaultPasswordHasher()
         environment.jersey().register(UserResource(userDao, clock, passwordHasher))
         environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
         environment.jersey().register(BookResource(bookDao, clock))
         environment.jersey().register(BooksResource(bookDao))
-        environment.jersey().register(LendResource(library, bookDao))
+        environment.jersey().register(LendResource(library))
     }
 }
 

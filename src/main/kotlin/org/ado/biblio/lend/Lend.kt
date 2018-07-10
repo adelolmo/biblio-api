@@ -10,4 +10,10 @@ data class Lend(
         @field:NotNull @field:NotEmpty val person: String,
         @field:NotNull val createdAt: Instant,
         val returnedAt: Instant?
-)
+) {
+    companion object {
+        fun create(bookId: Long, person: String, createdAt: Instant): Lend {
+            return Lend(null, bookId, person, createdAt, null)
+        }
+    }
+}

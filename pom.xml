@@ -61,6 +61,11 @@
             <version>1.11</version>
         </dependency>
         <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-books</artifactId>
+            <version>v1-rev99-1.23.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.version}</version>

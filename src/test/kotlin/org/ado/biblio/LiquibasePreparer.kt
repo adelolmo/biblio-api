@@ -19,7 +19,7 @@ class LiquibasePreparer(private val migrationFile: String) : DatabasePreparer {
             val jdbcConnection = JdbcConnection(connection)
             postgres.connection = jdbcConnection
             val liquibase = Liquibase(migrationFile, ClassLoaderResourceAccessor(), jdbcConnection)
-            liquibase.log.setLogLevel("OFF")
+            liquibase.log.setLogLevel("off")
             liquibase.update("")
         } catch (e: LiquibaseException) {
             throw IllegalStateException("Failed to execute migrations!", e)
