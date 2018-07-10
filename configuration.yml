@@ -27,7 +27,7 @@ database:
 logging:
   level: WARN
   loggers:
-    de.digitalperformance: INFO
+    org.ado: INFO
   appenders:
     - type: console
       logFormat: '%date{ISO8601} %-5level[%thread] %logger{10} %m%n'
