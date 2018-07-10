@@ -8,7 +8,7 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor
 import io.dropwizard.configuration.SubstitutingSourceProvider
 import io.dropwizard.db.DataSourceFactory
 import io.dropwizard.db.PooledDataSourceFactory
-import io.dropwizard.jdbi.DBIFactory
+import io.dropwizard.jdbi3.JdbiFactory
 import io.dropwizard.migrations.MigrationsBundle
 import io.dropwizard.setup.Bootstrap
 import io.dropwizard.setup.Environment
@@ -26,6 +26,7 @@ import org.ado.biblio.users.DefaultPasswordHasher
 import org.ado.biblio.users.UserDao
 import org.ado.biblio.users.UserResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
+import org.jdbi.v3.postgres.PostgresPlugin
 import java.time.Clock
 
 class Application : io.dropwizard.Application<Configuration>() {
@@ -51,11 +52,12 @@ class Application : io.dropwizard.Application<Configuration>() {
     override fun run(configuration: Configuration, environment: Environment) {
         val clock = Clock.systemUTC()
 
-        val dbi = DBIFactory().build(environment, configuration.dataSourceFactory, "$name-db")
-        val userDao = dbi.onDemand(UserDao::class.java)
-        val sessionDao = dbi.onDemand(SessionDao::class.java)
-        val bookDao = dbi.onDemand(BookDao::class.java)
-        val lendDao = dbi.onDemand(LendDao::class.java)
+        val jdbi = JdbiFactory().build(environment, configuration.dataSourceFactory, "$name-db")
+                .installPlugin(PostgresPlugin())
+        val userDao = jdbi.onDemand(UserDao::class.java)
+        val sessionDao = jdbi.onDemand(SessionDao::class.java)
+        val bookDao = jdbi.onDemand(BookDao::class.java)
+        val lendDao = jdbi.onDemand(LendDao::class.java)
 
         val passwordHasher = DefaultPasswordHasher()
         val library = Library(lendDao, bookDao, clock)

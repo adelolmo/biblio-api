@@ -13,7 +13,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dropwizard.version>1.2.0</dropwizard.version>
+        <java.version>1.8</java.version>
+
+        <dropwizard.version>1.3.3</dropwizard.version>
         <postgres.version>42.1.4</postgres.version>
         <kotlin.version>1.2.51</kotlin.version>
         <kotlin-jackson.version>2.9.1</kotlin-jackson.version>
@@ -45,8 +47,24 @@
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-jdbi</artifactId>
+            <artifactId>dropwizard-jdbi3</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-postgres</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-kotlin</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-kotlin-sqlobject</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-migrations</artifactId>
@@ -103,6 +121,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-testing</artifactId>
+            <version>3.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

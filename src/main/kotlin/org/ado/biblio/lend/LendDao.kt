@@ -1,9 +1,9 @@
 package org.ado.biblio.lend
 
-import org.skife.jdbi.v2.sqlobject.Bind
-import org.skife.jdbi.v2.sqlobject.BindBean
-import org.skife.jdbi.v2.sqlobject.SqlQuery
-import org.skife.jdbi.v2.sqlobject.SqlUpdate
+import org.jdbi.v3.sqlobject.customizer.Bind
+import org.jdbi.v3.sqlobject.customizer.BindBean
+import org.jdbi.v3.sqlobject.statement.SqlQuery
+import org.jdbi.v3.sqlobject.statement.SqlUpdate
 import java.time.Instant
 
 interface LendDao {
