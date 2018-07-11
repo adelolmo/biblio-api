@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+echo "preinst: $@"
+
+case "$1" in
+    upgrade|configure|reconfigure)
+        systemctl stop biblio-api
+    ;;
+esac

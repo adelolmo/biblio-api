@@ -1,0 +1,16 @@
+[Unit]
+Description=Solution to keep your personal physical library organized 
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+ExecStartPre=/usr/bin/java -jar /opt/biblio-api/biblio-api.jar db migrate /etc/biblio-api/configuration.yml
+ExecStart=/usr/bin/java -jar /opt/biblio-api/biblio-api.jar serve /etc/biblio-api/configuration.yml
+Restart=on-failure
+StandardOutput=syslog+console
+SyslogIdentifier=biblio-api
+
+[Install]
+WantedBy=multi-user.target

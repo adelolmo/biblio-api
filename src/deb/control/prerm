@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+echo "prerm: $@"
+
+case "$1" in
+    upgrade)
+        systemctl stop biblio-api
+    ;;
+
+    remove)
+        systemctl stop biblio-api
+        systemctl disable biblio-api
+        systemctl daemon-reload
+    ;;
+esac
+
+exit 0

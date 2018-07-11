@@ -1,0 +1,24 @@
+#!/bin/sh -e
+
+echo "postinst: $@"
+
+case "$1" in
+    install)
+        systemctl daemon-reload
+        systemctl enable biblio-api
+        systemctl start biblio-api
+    ;;
+
+    configure|reconfigure)
+        systemctl daemon-reload
+        systemctl restart biblio-api
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+    
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac

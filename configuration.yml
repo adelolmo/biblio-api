@@ -17,7 +17,7 @@ database:
   properties:
     charSet: UTF-8
   maxWaitForConnection: 2s
-  validationQuery: "/* theseus Health Check */ SELECT 1"
+  validationQuery: "/* biblio Health Check */ SELECT 1"
   validationQueryTimeout: 3s
   minSize: 5
   maxSize: 15
