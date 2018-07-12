@@ -269,8 +269,6 @@
                             <changesOut>
                                 ${project.build.directory}/releases/${project.build.finalName}_${project.version}_all.changes
                             </changesOut>
-                            <verbose>true</verbose>
-                            <controlDir>${basedir}/src/deb/control</controlDir>
                             <dataSet>
                                 <data>
                                     <src>${project.build.directory}/${project.build.finalName}.jar</src>
@@ -289,7 +287,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/src/deb/lib</src>
+                                    <src>${basedir}/deb/lib</src>
                                     <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
