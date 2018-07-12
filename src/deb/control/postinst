@@ -3,14 +3,14 @@
 echo "postinst: $@"
 
 case "$1" in
-    install)
+    configure|reconfigure)
+        if [ -z $2 ]; then
+            echo 'Creating biblio-api user ...'
+            adduser --system --gecos "Keep your personal physical library organized" --disabled-password --group --no-create-home biblio-api > /dev/null 2>&1
+            echo 'User created.'
+        fi
         systemctl daemon-reload
         systemctl enable biblio-api
-        systemctl start biblio-api
-    ;;
-
-    configure|reconfigure)
-        systemctl daemon-reload
         systemctl restart biblio-api
     ;;
 

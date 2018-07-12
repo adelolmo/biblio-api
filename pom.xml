@@ -7,7 +7,7 @@
     <groupId>org.ado</groupId>
     <artifactId>biblio-api</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>Solution to keep your personal physical library organized</description>
+    <description>Keep your personal physical library organized</description>
 
     <name>biblio-api</name>
 

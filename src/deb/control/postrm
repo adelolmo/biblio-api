@@ -1,6 +1,4 @@
-#!/bin/sh
-
-set -e
+#!/bin/sh -e
 echo "postrm: $@"
 
 case "$1" in
@@ -8,7 +6,8 @@ case "$1" in
     ;;
 
     purge)
-        #rm -rf /etc/biblio-api/
+        echo "Removing \`biblio-api' user ..."
+        userdel biblio-api > /dev/null 2>&1
     ;;
 
     disappear|upgrade|failed-upgrade|abort-install|abort-upgrade)
