@@ -1,7 +1,7 @@
 package org.ado.biblio.books
 
 import io.dropwizard.auth.Auth
-import org.ado.biblio.auth.ApiUser
+import org.ado.biblio.users.User
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType
 class BooksResource(private val bookDao: BookDao) {
 
     @GET
-    fun get(@Auth user: ApiUser): BooksDto {
+    fun get(@Auth user: User): BooksDto {
         return BooksDto(bookDao.getAll(user.username))
     }
 }

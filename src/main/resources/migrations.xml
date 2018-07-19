@@ -101,4 +101,8 @@
     <changeSet id="3" author="andoni">
         <dropNotNullConstraint tableName="lends" columnName="returned_at"/>
     </changeSet>
+
+    <changeSet id="4" author="andoni">
+        <dropNotNullConstraint tableName="books" columnName="tags"/>
+    </changeSet>
 </databaseChangeLog>

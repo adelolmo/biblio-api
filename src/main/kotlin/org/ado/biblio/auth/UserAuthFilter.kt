@@ -13,7 +13,7 @@ import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.SecurityContext
 
 @Priority(Priorities.AUTHENTICATION)
-class ApiUserAuthFilter<P : Principal> : AuthFilter<Token, P>() {
+class UserAuthFilter<P : Principal> : AuthFilter<Token, P>() {
 
     override fun filter(requestContext: ContainerRequestContext) {
         val tokenValue = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION)
@@ -47,12 +47,10 @@ class ApiUserAuthFilter<P : Principal> : AuthFilter<Token, P>() {
     }
 
     class Builder<P : Principal> :
-            AuthFilter.AuthFilterBuilder<Token, P, ApiUserAuthFilter<P>>() {
-
-        override fun newInstance(): ApiUserAuthFilter<P> {
-            return ApiUserAuthFilter()
+            AuthFilter.AuthFilterBuilder<Token, P, UserAuthFilter<P>>() {
+        override fun newInstance(): UserAuthFilter<P> {
+            return UserAuthFilter()
         }
-
     }
 }
 

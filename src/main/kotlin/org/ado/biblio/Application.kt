@@ -12,7 +12,10 @@ import io.dropwizard.jdbi3.JdbiFactory
 import io.dropwizard.migrations.MigrationsBundle
 import io.dropwizard.setup.Bootstrap
 import io.dropwizard.setup.Environment
-import org.ado.biblio.auth.*
+import org.ado.biblio.auth.UserAuthFilter
+import org.ado.biblio.auth.UserAuthenticator
+import org.ado.biblio.auth.UserAuthorizer
+import org.ado.biblio.auth.UserUnauthorizedHandler
 import org.ado.biblio.books.BookDao
 import org.ado.biblio.books.BookResource
 import org.ado.biblio.books.BooksResource
@@ -25,6 +28,7 @@ import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
 import org.ado.biblio.sessions.SessionResource
 import org.ado.biblio.users.DefaultPasswordHasher
+import org.ado.biblio.users.User
 import org.ado.biblio.users.UserDao
 import org.ado.biblio.users.UserResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
@@ -74,14 +78,14 @@ class Application : io.dropwizard.Application<Configuration>() {
         val library = Library(lendDao, bookDao, clock)
 
         environment.jersey().register(AuthDynamicFeature(
-                ApiUserAuthFilter.Builder<ApiUser>()
-                        .setAuthenticator(ApiUserAuthenticator(userDao, sessionDao))
-                        .setAuthorizer(ApiUserAuthorizer())
-                        .setUnauthorizedHandler(ApiUserUnauthorizedHandler())
+                UserAuthFilter.Builder<User>()
+                        .setAuthenticator(UserAuthenticator(userDao, sessionDao))
+                        .setAuthorizer(UserAuthorizer())
+                        .setUnauthorizedHandler(UserUnauthorizedHandler())
                         .setRealm("BIBLIO REALM")
                         .buildAuthFilter()))
         environment.jersey().register(RolesAllowedDynamicFeature::class.java)
-        environment.jersey().register(AuthValueFactoryProvider.Binder<ApiUser>(ApiUser::class.java))
+        environment.jersey().register(AuthValueFactoryProvider.Binder<User>(User::class.java))
 
         environment.jersey().register(UserResource(userDao, clock, passwordHasher))
         environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
