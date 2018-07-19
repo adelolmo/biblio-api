@@ -14,13 +14,15 @@ import org.postgresql.ds.PGSimpleDataSource
 class JdbiDbFactory {
     companion object {
         fun create(dataSource: PGSimpleDataSource): Jdbi {
-            val environment = Environment("test-env", Jackson.newObjectMapper(), null, MetricRegistry(), null)
             val dataSourceFactory = DataSourceFactory()
             dataSourceFactory.driverClass = "org.postgresql.Driver"
             dataSourceFactory.url = dataSource.url
             dataSourceFactory.user = dataSource.user
 
-            return JdbiFactory().build(environment, dataSourceFactory, "test")
+            return JdbiFactory().build(
+                    Environment("test-env", Jackson.newObjectMapper(), null,
+                            MetricRegistry(), null),
+                    dataSourceFactory, "test")
                     .installPlugin(PostgresPlugin())
                     .installPlugin(KotlinPlugin())
                     .installPlugin(KotlinSqlObjectPlugin())
