@@ -27,11 +27,13 @@ import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
 import org.ado.biblio.sessions.SessionResource
+import org.ado.biblio.shared.Hasher
 import org.ado.biblio.users.DefaultPasswordHasher
 import org.ado.biblio.users.User
 import org.ado.biblio.users.UserDao
 import org.ado.biblio.users.UserResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
+import org.hashids.Hashids
 import org.jdbi.v3.postgres.PostgresPlugin
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -48,7 +50,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         bootstrap.objectMapper.registerModule(KotlinModule())
         bootstrap.configurationSourceProvider = SubstitutingSourceProvider(
                 bootstrap.configurationSourceProvider,
-                EnvironmentVariableSubstitutor(true))
+                EnvironmentVariableSubstitutor(false))
 
         bootstrap.addBundle(object : MigrationsBundle<Configuration>() {
             override fun getDataSourceFactory(conf: Configuration): PooledDataSourceFactory {
@@ -60,9 +62,12 @@ class Application : io.dropwizard.Application<Configuration>() {
 
     override fun run(configuration: Configuration, environment: Environment) {
         val clock = Clock.systemUTC()
+        val hashids = Hashids("Hash in biblio", 10)
+        val hasher = Hasher(hashids)
 
         val jdbi = JdbiFactory().build(environment, configuration.dataSourceFactory, "$name-db")
                 .installPlugin(PostgresPlugin())
+                .registerRowMapper(BookDao.BookMapper(hasher))
         val userDao = jdbi.onDemand(UserDao::class.java)
         val sessionDao = jdbi.onDemand(SessionDao::class.java)
         val bookDao = jdbi.onDemand(BookDao::class.java)
@@ -77,6 +82,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         val passwordHasher = DefaultPasswordHasher()
         val library = Library(lendDao, bookDao, clock)
 
+
         environment.jersey().register(AuthDynamicFeature(
                 UserAuthFilter.Builder<User>()
                         .setAuthenticator(UserAuthenticator(userDao, sessionDao))
@@ -89,7 +95,7 @@ class Application : io.dropwizard.Application<Configuration>() {
 
         environment.jersey().register(UserResource(userDao, clock, passwordHasher))
         environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
-        environment.jersey().register(BookResource(bookDao, clock))
+        environment.jersey().register(BookResource(bookDao, clock, hasher))
         environment.jersey().register(BooksResource(bookDao))
         environment.jersey().register(LendResource(library))
         environment.jersey().register(IsbnSearchResource(googleBooksDao))

@@ -1,8 +1,8 @@
 package org.ado.biblio.books
 
+import org.ado.biblio.shared.Hasher
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext
-import org.jdbi.v3.sqlobject.config.RegisterRowMapper
 import org.jdbi.v3.sqlobject.customizer.Bind
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys
@@ -14,11 +14,9 @@ import java.time.Instant
 interface BookDao {
 
     @SqlQuery("select * from books where username=:username and id=:id")
-    @RegisterRowMapper(BookMapper::class)
     fun get(@Bind("username") username: String, @Bind("id") id: Long): Book?
 
     @SqlQuery("select * from books where username=:username")
-    @RegisterRowMapper(BookMapper::class)
     fun getAll(@Bind("username") username: String): List<Book>
 
     @SqlUpdate(
@@ -32,9 +30,9 @@ interface BookDao {
     @SqlQuery("select exists(select 1 from books where username=:username and id=:id)")
     fun exists(@Bind("username") username: String, @Bind("id") id: Long): Boolean
 
-    class BookMapper : RowMapper<Book> {
+    class BookMapper(val hasher: Hasher) : RowMapper<Book> {
         override fun map(rs: ResultSet, ctx: StatementContext): Book {
-            return Book(rs.getLong("id"),
+            return Book(hasher.encode(rs.getLong("id")),
                     rs.getString("username"),
                     rs.getString("title"),
                     rs.getString("author"),

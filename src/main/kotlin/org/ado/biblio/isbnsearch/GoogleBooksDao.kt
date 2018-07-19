@@ -6,8 +6,8 @@ import retrofit2.http.Query
 
 interface GoogleBooksDao {
 
-    @GET("/volumes")
-    fun get(@Query("q") isbn: String): Call<Volumes>
+    @GET("volumes")
+    fun get(@Query("q") q: String): Call<Volumes>
 
     data class Volumes(val kind: String,
                        val totalItems: Int,

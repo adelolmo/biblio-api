@@ -1,7 +1,7 @@
 package org.ado.biblio.books
 
 import io.dropwizard.auth.Auth
-import io.dropwizard.jersey.params.LongParam
+import org.ado.biblio.shared.Hasher
 import org.ado.biblio.users.User
 import java.time.Clock
 import java.time.Instant
@@ -15,12 +15,18 @@ import javax.ws.rs.core.UriBuilder
 @Path("books")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class BookResource(private val bookDao: BookDao, private val clock: Clock) {
+class BookResource(
+        private val bookDao: BookDao,
+        private val clock: Clock,
+        private val hasher: Hasher
+) {
 
     @GET
     @Path("{id}")
-    fun get(@Auth user: User, @PathParam("id") id: LongParam): Book {
-        return bookDao.get(user.username, id.get()) ?: throw NotFoundException("book with id ${id.get()} not found")
+    fun get(@Auth user: User, @PathParam("id") id: String): Book {
+        val bookId = hasher.decode(id)
+        return bookDao.get(user.username, bookId.get())
+                ?: throw NotFoundException("book with id ${bookId.get()} not found")
     }
 
     @POST

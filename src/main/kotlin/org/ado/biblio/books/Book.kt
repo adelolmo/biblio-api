@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.NotEmpty
 import java.time.Instant
 import javax.validation.constraints.NotNull
 
-data class Book(val id: Long?,
+data class Book(val id: String?,
                 val username: String?,
                 @field:NotNull @field:NotEmpty val title: String,
                 @field:NotNull @field:NotEmpty val author: String,

@@ -6,17 +6,16 @@ import java.util.stream.Collectors
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 
-@Path("/isbnsearch/{id}")
+@Path("/isbnsearch")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class IsbnSearchResource(private val googleBooksDao: GoogleBooksDao) {
 
     @GET
-    fun get(@PathParam("id") isbn: String): BooksDto {
-        val response = googleBooksDao.get(isbn).execute()
-        if (!response.isSuccessful) {
-            println(response.errorBody())
-            return BooksDto(emptyList())
+    fun get(@QueryParam("q") q: String): BooksDto {
+        val response = googleBooksDao.get(q).execute()
+        if (!response.isSuccessful || response.body() == null) {
+            throw NotFoundException("q not found")
         }
         return BooksDto(response.body()!!.items.stream()
                 .map { i ->
