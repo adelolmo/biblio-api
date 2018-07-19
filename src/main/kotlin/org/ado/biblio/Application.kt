@@ -65,7 +65,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         val lendDao = jdbi.onDemand(LendDao::class.java)
 
         val retrofit = Retrofit.Builder()
-                .baseUrl("https://www.googleapis.com/")
+                .baseUrl("https://www.googleapis.com/books/v1/")
                 .addConverterFactory(JacksonConverterFactory.create(environment.objectMapper))
                 .build()
         val googleBooksDao = retrofit.create(GoogleBooksDao::class.java)
