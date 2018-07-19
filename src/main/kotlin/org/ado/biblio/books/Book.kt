@@ -12,4 +12,10 @@ data class Book(val id: Long?,
                 val tags: String?,
                 val createdAt: Instant?,
                 @field:NotNull @field:NotEmpty val imageUrl: String
-)
+) {
+    companion object {
+        fun of(title: String, author: String, isbn: String, imageUrl: String): Book {
+            return Book(null, null, title, author, isbn, null, null, imageUrl)
+        }
+    }
+}

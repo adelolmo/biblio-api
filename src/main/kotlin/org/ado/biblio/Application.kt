@@ -18,6 +18,8 @@ import org.ado.biblio.books.BookResource
 import org.ado.biblio.books.BooksResource
 import org.ado.biblio.books.core.Library
 import org.ado.biblio.infrastructure.ObjectMapperBundle
+import org.ado.biblio.isbnsearch.GoogleBooksDao
+import org.ado.biblio.isbnsearch.IsbnSearchResource
 import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
@@ -27,7 +29,10 @@ import org.ado.biblio.users.UserDao
 import org.ado.biblio.users.UserResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 import org.jdbi.v3.postgres.PostgresPlugin
+import retrofit2.Retrofit
+import retrofit2.converter.jackson.JacksonConverterFactory
 import java.time.Clock
+
 
 class Application : io.dropwizard.Application<Configuration>() {
 
@@ -59,6 +64,12 @@ class Application : io.dropwizard.Application<Configuration>() {
         val bookDao = jdbi.onDemand(BookDao::class.java)
         val lendDao = jdbi.onDemand(LendDao::class.java)
 
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://www.googleapis.com/")
+                .addConverterFactory(JacksonConverterFactory.create(environment.objectMapper))
+                .build()
+        val googleBooksDao = retrofit.create(GoogleBooksDao::class.java)
+
         val passwordHasher = DefaultPasswordHasher()
         val library = Library(lendDao, bookDao, clock)
 
@@ -77,6 +88,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         environment.jersey().register(BookResource(bookDao, clock))
         environment.jersey().register(BooksResource(bookDao))
         environment.jersey().register(LendResource(library))
+        environment.jersey().register(IsbnSearchResource(googleBooksDao))
     }
 }
 

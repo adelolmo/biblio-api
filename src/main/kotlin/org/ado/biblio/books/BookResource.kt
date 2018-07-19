@@ -15,7 +15,7 @@ import javax.ws.rs.core.UriBuilder
 @Path("books")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class BookResource(private val bookDao: BookDao, val clock: Clock) {
+class BookResource(private val bookDao: BookDao, private val clock: Clock) {
 
     @GET
     @Path("{id}")
