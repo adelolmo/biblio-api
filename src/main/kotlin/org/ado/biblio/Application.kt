@@ -21,7 +21,8 @@ import org.ado.biblio.books.BookResource
 import org.ado.biblio.books.BooksResource
 import org.ado.biblio.books.core.Library
 import org.ado.biblio.infrastructure.ObjectMapperBundle
-import org.ado.biblio.isbnsearch.GoogleBooksDao
+import org.ado.biblio.isbnsearch.DefaultGoogleBooksDao
+import org.ado.biblio.isbnsearch.GoogleBooksApi
 import org.ado.biblio.isbnsearch.IsbnSearchResource
 import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
@@ -64,6 +65,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         val clock = Clock.systemUTC()
         val hashids = Hashids("Hash in biblio", 10)
         val hasher = BookHasher(hashids)
+        val passwordHasher = DefaultPasswordHasher()
 
         val jdbi = JdbiFactory().build(environment, configuration.dataSourceFactory, "$name-db")
                 .installPlugin(PostgresPlugin())
@@ -77,11 +79,10 @@ class Application : io.dropwizard.Application<Configuration>() {
                 .baseUrl("https://www.googleapis.com/books/v1/")
                 .addConverterFactory(JacksonConverterFactory.create(environment.objectMapper))
                 .build()
-        val googleBooksDao = retrofit.create(GoogleBooksDao::class.java)
+        val googleBooksApi = retrofit.create(GoogleBooksApi::class.java)
+        val googleBooksDao = DefaultGoogleBooksDao(googleBooksApi)
 
-        val passwordHasher = DefaultPasswordHasher()
         val library = Library(lendDao, bookDao, clock)
-
 
         environment.jersey().register(AuthDynamicFeature(
                 UserAuthFilter.Builder<User>()

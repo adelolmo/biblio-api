@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface GoogleBooksDao {
+interface GoogleBooksApi {
 
     @GET("volumes")
     fun get(@Query("q") q: String): Call<Volumes>
@@ -21,21 +21,8 @@ interface GoogleBooksDao {
 
     data class VolumeInfo(val title: String,
                           val authors: List<String> = emptyList(),
-                          val publisher: String = "",
-                          val publishedDate: String = "",
-                          val description: String = "",
                           val industryIdentifiers: List<IndustryIdentifier> = emptyList(),
-                          val pageCount: Int,
-                          val printType: String,
-                          val categories: List<String> = emptyList(),
-                          val averageRating: Int,
-                          val ratingsCount: Int,
-                          val contentVersion: String,
-                          val imageLinks: ImageLinks,
-                          val language: String,
-                          val previewLink: String,
-                          val infoLink: String,
-                          val canonicalVolumeLink: String)
+                          val imageLinks: ImageLinks)
 
     data class IndustryIdentifier(val type: IndustryIdentifierTypeEnum,
                                   val identifier: String)
