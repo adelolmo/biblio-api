@@ -4,20 +4,22 @@ import org.hashids.Hashids
 import java.util.*
 
 
-/**
- * @author Andoni del Olmo
- * @since 19.07.18
- */
-class Hasher(val hashids: Hashids) {
+interface Hasher {
+    fun encode(number: Long): String
+    fun decode(id: String): Optional<Long>
+}
 
-    fun encode(number: Long): String {
+class BookHasher(val hashids: Hashids) : Hasher {
+
+    override fun encode(number: Long): String {
         return hashids.encode(number)
     }
 
-    fun decode(id: String): Optional<Long> {
+    override fun decode(id: String): Optional<Long> {
         val decode = hashids.decode(id)
-        return if (decode.size == 1) {
-            Optional.of(decode[0])
-        } else Optional.empty()
+        if (decode.size == 1) {
+            return Optional.of(decode[0])
+        }
+        return Optional.empty()
     }
 }

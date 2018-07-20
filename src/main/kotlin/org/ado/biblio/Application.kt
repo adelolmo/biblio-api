@@ -27,7 +27,7 @@ import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
 import org.ado.biblio.sessions.SessionResource
-import org.ado.biblio.shared.Hasher
+import org.ado.biblio.shared.BookHasher
 import org.ado.biblio.users.DefaultPasswordHasher
 import org.ado.biblio.users.User
 import org.ado.biblio.users.UserDao
@@ -63,7 +63,7 @@ class Application : io.dropwizard.Application<Configuration>() {
     override fun run(configuration: Configuration, environment: Environment) {
         val clock = Clock.systemUTC()
         val hashids = Hashids("Hash in biblio", 10)
-        val hasher = Hasher(hashids)
+        val hasher = BookHasher(hashids)
 
         val jdbi = JdbiFactory().build(environment, configuration.dataSourceFactory, "$name-db")
                 .installPlugin(PostgresPlugin())

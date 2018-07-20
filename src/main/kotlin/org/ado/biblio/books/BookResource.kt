@@ -25,8 +25,9 @@ class BookResource(
     @Path("{id}")
     fun get(@Auth user: User, @PathParam("id") id: String): Book {
         val bookId = hasher.decode(id)
-        return bookDao.get(user.username, bookId.get())
-                ?: throw NotFoundException("book with id ${bookId.get()} not found")
+                .orElseThrow { throw NotFoundException("book with id $id not found") }
+        return bookDao.get(user.username, bookId)
+                ?: throw NotFoundException("book with id $id not found")
     }
 
     @POST
