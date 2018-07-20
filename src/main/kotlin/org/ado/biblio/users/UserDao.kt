@@ -8,12 +8,13 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import org.jdbi.v3.sqlobject.statement.SqlUpdate
 import java.sql.ResultSet
+import java.util.*
 
 @RegisterRowMapper(UserDao.UserMapper::class)
 interface UserDao {
 
     @SqlQuery("select * from users where username=:username")
-    fun get(@Bind("username") username: String): User?
+    fun get(@Bind("username") username: String): Optional<User>
 
     @SqlQuery("select exists(select 1 from users where username=:username)")
     fun exists(@Bind("username") username: String): Boolean

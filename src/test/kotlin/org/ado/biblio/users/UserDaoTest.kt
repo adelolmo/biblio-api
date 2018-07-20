@@ -13,6 +13,7 @@ import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
 import java.sql.Timestamp
 import java.time.Instant
+import java.util.*
 
 class UserDaoTest {
 
@@ -45,13 +46,13 @@ class UserDaoTest {
                 .execute()
 
         assertThat(userDao.get("john"))
-                .isEqualTo(User(
+                .isEqualTo(Optional.of(User(
                         "john",
                         "salted password",
                         "salt",
                         "USER",
                         Instant.ofEpochMilli(0)
-                ))
+                )))
     }
 
     @Test

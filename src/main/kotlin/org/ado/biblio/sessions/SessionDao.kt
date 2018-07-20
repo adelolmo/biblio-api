@@ -14,7 +14,7 @@ interface SessionDao {
 
     @SqlQuery("select * from sessions where id=:id")
     @RegisterRowMapper(SessionMapper::class)
-    fun get(@Bind("id") id: String): Session?
+    fun get(@Bind("id") id: String): Optional<Session>
 
     @SqlUpdate("insert into sessions(id,username,created_at,expires_at) values (:id,:username,:createdAt,:expiresAt)")
     @RegisterRowMapper(SessionMapper::class)

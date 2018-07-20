@@ -85,7 +85,7 @@ class Application : io.dropwizard.Application<Configuration>() {
 
         environment.jersey().register(AuthDynamicFeature(
                 UserAuthFilter.Builder<User>()
-                        .setAuthenticator(UserAuthenticator(userDao, sessionDao))
+                        .setAuthenticator(UserAuthenticator(userDao, sessionDao, clock))
                         .setAuthorizer(UserAuthorizer())
                         .setUnauthorizedHandler(UserUnauthorizedHandler())
                         .setRealm("BIBLIO REALM")

@@ -17,23 +17,25 @@ import javax.ws.rs.core.UriBuilder
 @Path("/sessions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class SessionResource(val sessionDao: SessionDao, val userDao: UserDao, val clock: Clock, val passwordHasher: PasswordHasher) {
+class SessionResource(
+        private val sessionDao: SessionDao,
+        private val userDao: UserDao,
+        private val clock: Clock,
+        private val passwordHasher: PasswordHasher
+) {
 
     @GET
     @Path("{id}")
     fun get(@NotNull @PathParam("id") id: String): Response {
-        val session = sessionDao.get(id)
+        val session = sessionDao.get(id).orElseThrow { NotFoundException("Session $id not found") }
         return Response.ok(session).build()
     }
 
     @POST
     fun create(@Valid @NotNull sessionDto: SessionDto): Response {
-        if (!userDao.exists(sessionDto.username)) {
-            throw NotFoundException("user not found")
-        }
-        val user = userDao.get(sessionDto.username) ?: throw NotFoundException("user not found")
+        val user = userDao.get(sessionDto.username).orElseThrow { NotFoundException("wrong username or password") }
         if (!userDao.validate(sessionDto.username, passwordHasher.encode(sessionDto.password, user.salt))) {
-            throw NotFoundException("wrong credentials")
+            throw NotFoundException("wrong username or password")
         }
 
         val id = UUID.randomUUID()
