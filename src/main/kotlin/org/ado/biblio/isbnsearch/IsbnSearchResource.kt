@@ -14,7 +14,7 @@ class IsbnSearchResource(private val googleBooksDaoDao: GoogleBooksDao) {
     @GET
     fun get(@QueryParam("q") q: String): BooksDto {
         val volumes =
-                googleBooksDaoDao.get(q).orElseThrow { NotFoundException("no book found for search term $q") }
+                googleBooksDaoDao.get(q).orElseThrow { NotFoundException("no book found for search query $q") }
 
         return BooksDto(volumes.items.stream()
                 .map { i ->
@@ -26,13 +26,13 @@ class IsbnSearchResource(private val googleBooksDaoDao: GoogleBooksDao) {
     }
 
     private fun isbn(industryIdentifiers: List<GoogleBooksApi.IndustryIdentifier>): String {
-        var isbn = ""
+        var fallbackIsbn = ""
         for (industryIdentifier in industryIdentifiers) {
-            isbn = industryIdentifier.identifier
-            if (industryIdentifier.type == GoogleBooksApi.IndustryIdentifierTypeEnum.ISBN_13) {
-                return isbn
+            if (GoogleBooksApi.IndustryIdentifierTypeEnum.ISBN_13 == industryIdentifier.type) {
+                return industryIdentifier.identifier
             }
+            fallbackIsbn = industryIdentifier.identifier
         }
-        return isbn
+        return fallbackIsbn
     }
 }

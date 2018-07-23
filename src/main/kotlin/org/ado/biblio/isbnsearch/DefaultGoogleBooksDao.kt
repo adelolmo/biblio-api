@@ -9,9 +9,9 @@ interface GoogleBooksDao {
 class DefaultGoogleBooksDao(private val googleBooksApi: GoogleBooksApi) : GoogleBooksDao {
     override fun get(q: String): Optional<GoogleBooksApi.Volumes> {
         val response = googleBooksApi.get(q).execute()
-        if (!response.isSuccessful || response.body() == null) {
-            return Optional.empty()
+        if (response.isSuccessful) {
+            return Optional.ofNullable(response.body())
         }
-        return Optional.ofNullable(response.body())
+        return Optional.empty()
     }
 }
