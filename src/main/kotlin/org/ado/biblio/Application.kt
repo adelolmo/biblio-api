@@ -98,7 +98,7 @@ class Application : io.dropwizard.Application<Configuration>() {
         environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
         environment.jersey().register(BookResource(bookDao, clock, hasher))
         environment.jersey().register(BooksResource(bookDao))
-        environment.jersey().register(LendResource(library))
+        environment.jersey().register(LendResource(library, hasher))
         environment.jersey().register(IsbnSearchResource(googleBooksDao))
     }
 }

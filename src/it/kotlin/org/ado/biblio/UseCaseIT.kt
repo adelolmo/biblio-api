@@ -9,6 +9,8 @@ import java.util.*
 
 class UseCaseIT {
 
+    private val baseUrl: String = "http://localhost:18090"
+
     @Test
     fun creatingUser() {
         val response = createUser(UUID.randomUUID())
@@ -35,7 +37,7 @@ class UseCaseIT {
 
         val response = createBook(session)
         response.statusCode(`is`(201))
-        response.header("Location", startsWith("http://localhost:18090/books"))
+        response.header("Location", startsWith("$baseUrl/books"))
     }
 
     @Test
@@ -62,8 +64,40 @@ class UseCaseIT {
                 .body("imageUrl", equalTo("http://image"))
     }
 
+    @Test
+    fun lendingBook() {
+        val username = UUID.randomUUID()
+        createUser(username)
+        val sessionResponse = createSession(username)
+        val session = sessionResponse.extract().header("Authorization")
+        val bookLocation = createBook(session).extract().header("Location")
+        val bookId = bookLocation.split("/")[4]
+
+        lendBook(bookId, session).statusCode(`is`(202))
+    }
+
+    @Test
+    fun givingBackBook() {
+        val username = UUID.randomUUID()
+        createUser(username)
+        val sessionResponse = createSession(username)
+        val session = sessionResponse.extract().header("Authorization")
+        val bookLocation = createBook(session).extract().header("Location")
+        val bookId = bookLocation.split("/")[4]
+        lendBook(bookId, session)
+
+        given()
+                .request()
+                .contentType(ContentType.JSON)
+                .headers("Authorization", session)
+                .`when`()
+                .delete("$baseUrl/books/$bookId/lends")
+                .then()
+                .statusCode(202)
+    }
+
     private fun createUser(username: UUID): ValidatableResponse {
-        val post = given()
+        return given()
                 .request()
                 .contentType(ContentType.JSON)
                 .body("""
@@ -73,12 +107,12 @@ class UseCaseIT {
                         }
                     """.trimIndent())
                 .`when`()
-                .post("http://localhost:18090/users")
-        return post.then()
+                .post("$baseUrl/users")
+                .then()
     }
 
     private fun createSession(username: UUID): ValidatableResponse {
-        val post = given()
+        return given()
                 .request()
                 .contentType(ContentType.JSON)
                 .body("""
@@ -88,12 +122,12 @@ class UseCaseIT {
                         }
                     """.trimIndent())
                 .`when`()
-                .post("http://localhost:18090/sessions")
-        return post.then()
+                .post("$baseUrl/sessions")
+                .then()
     }
 
     private fun createBook(session: String): ValidatableResponse {
-        val addBook = given()
+        return given()
                 .request()
                 .contentType(ContentType.JSON)
                 .headers("Authorization", session)
@@ -106,7 +140,22 @@ class UseCaseIT {
                         }
                     """.trimIndent())
                 .`when`()
-                .post("http://localhost:18090/books")
-        return addBook.then()
+                .post("$baseUrl/books")
+                .then()
+    }
+
+    private fun lendBook(bookId: String, session: String): ValidatableResponse {
+        return given()
+                .request()
+                .contentType(ContentType.JSON)
+                .headers("Authorization", session)
+                .body("""
+                            {
+                                "name":"John"
+                            }
+                    """.trimIndent())
+                .`when`()
+                .post("$baseUrl/books/$bookId/lends")
+                .then()
     }
 }

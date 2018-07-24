@@ -1,8 +1,8 @@
 package org.ado.biblio.lend
 
 import io.dropwizard.auth.Auth
-import io.dropwizard.jersey.params.LongParam
 import org.ado.biblio.books.core.Library
+import org.ado.biblio.shared.Hasher
 import org.ado.biblio.users.User
 import org.hibernate.validator.constraints.NotEmpty
 import javax.validation.constraints.NotNull
@@ -10,22 +10,24 @@ import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Path("book-lends")
+@Path("books/{id}/lends")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class LendResource(private val library: Library) {
+class LendResource(private val library: Library, private val hasher: Hasher) {
 
     @POST
-    @Path("{id}")
-    fun add(@Auth user: User, @PathParam("id") bookId: LongParam, personDto: PersonDto): Response {
-        library.lend(user.username, bookId.get(), personDto.name)
+    fun add(@Auth user: User, @PathParam("id") id: String, personDto: PersonDto): Response {
+        val bookId = hasher.decode(id)
+                .orElseThrow { throw NotFoundException("book with id $id not found") }
+        library.lend(user.username, bookId, personDto.name)
         return Response.accepted().build()
     }
 
     @DELETE
-    @Path("{id}")
-    fun delete(@Auth user: User, @PathParam("id") bookId: LongParam): Response {
-        library.giveBack(user.username, bookId.get())
+    fun delete(@Auth user: User, @PathParam("id") id: String): Response {
+        val bookId = hasher.decode(id)
+                .orElseThrow { throw NotFoundException("book with id $id not found") }
+        library.giveBack(user.username, bookId)
         return Response.accepted().build()
     }
 }
