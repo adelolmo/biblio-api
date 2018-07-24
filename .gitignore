@@ -3,3 +3,4 @@
 target
 .vagrant
 *.log
+dependency-reduced-pom.xml
