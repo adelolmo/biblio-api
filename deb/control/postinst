@@ -8,6 +8,12 @@ case "$1" in
             echo 'Creating biblio-api user ...'
             adduser --system --gecos "Keep your personal physical library organized" --disabled-password --group --no-create-home biblio-api > /dev/null 2>&1
             echo 'User created.'
+
+            echo 'Creating database and user ...'
+            su postgres -c "psql -c \"CREATE DATABASE biblio;\""
+            su postgres -c "psql -c \"CREATE USER biblio WITH ENCRYPTED PASSWORD 'biblio';\""
+            su postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE biblio TO biblio;\""
+            echo 'Database and user created.'
         fi
         systemctl daemon-reload
         systemctl enable biblio-api
