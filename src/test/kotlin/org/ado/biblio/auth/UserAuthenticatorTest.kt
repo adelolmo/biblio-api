@@ -46,7 +46,7 @@ class UserAuthenticatorTest {
     fun authenticating() {
         `when`(sessionDao.get("token"))
                 .thenReturn(Optional.of(Session(UUID.randomUUID(), "john", clock.instant(), clock.instant().plusMillis(1))))
-        val user = User("user", "hashed", "salt", "USER", Instant.now(clock))
+        val user = User("creatingUser", "hashed", "salt", "USER", Instant.now(clock))
         `when`(userDao.get("john")).thenReturn(Optional.of(user))
 
         assertThat(userAuthenticator.authenticate(Token("token"))).isEqualTo(Optional.of(user))

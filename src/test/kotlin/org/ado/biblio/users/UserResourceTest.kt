@@ -24,8 +24,8 @@ class UserResourceTest {
         `when`(passwordHasher.encode("pass"))
                 .thenReturn(PasswordHashed("salt", "hashed"))
 
-        userResource.add(UserDto("user", "pass"))
+        userResource.add(UserDto("creatingUser", "pass"))
 
-        verify(userDao).add(User("user", "hashed", "salt", "USER", Instant.now(clock)))
+        verify(userDao).add(User("creatingUser", "hashed", "salt", "USER", Instant.now(clock)))
     }
 }
