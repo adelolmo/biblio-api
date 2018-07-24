@@ -35,7 +35,7 @@ class BookResource(
         val id = bookDao.add(user.username, Instant.now(clock), book)
         return Response.created(
                 (UriBuilder.fromResource(BookResource::class.java)
-                        .path(id.toString()).build()))
+                        .path(hasher.encode(id)).build()))
                 .build()
     }
 }

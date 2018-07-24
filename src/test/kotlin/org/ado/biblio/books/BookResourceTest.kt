@@ -58,6 +58,7 @@ class BookResourceTest {
 
     @Test
     fun adding() {
+        `when`(hasher.encode(1)).thenReturn("ID")
         val book = Book("ID", "john", "Kotlin for dummies", "Mark T. Narrow", "1234",
                 "good, manual", clock.instant(), "http://something")
         `when`(bookDao.add("john",
@@ -70,6 +71,6 @@ class BookResourceTest {
                         book)
 
         assertThat(response.statusInfo).isEqualTo(Response.Status.CREATED)
-        assertThat(response.headers["Location"]!!.first()).isEqualTo(URI.create("books/1"))
+        assertThat(response.headers["Location"]!!.first()).isEqualTo(URI.create("books/ID"))
     }
 }
