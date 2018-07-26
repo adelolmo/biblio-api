@@ -6,6 +6,7 @@ import org.mockito.Mockito.*
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
+import javax.ws.rs.NotFoundException
 
 class UserResourceTest {
 
@@ -19,13 +20,24 @@ class UserResourceTest {
         userResource = UserResource(userDao, clock, passwordHasher)
     }
 
+    @Test(expected = NotFoundException::class)
+    fun addingExistingUser() {
+        `when`(userDao.exists("user")).thenReturn(true)
+
+        userResource.add(UserDto("user", "pass"))
+
+        verify(userDao).exists("user")
+        verifyNoMoreInteractions(userDao)
+    }
+
     @Test
     fun adding() {
+        `when`(userDao.exists("user")).thenReturn(false)
         `when`(passwordHasher.encode("pass"))
                 .thenReturn(PasswordHashed("salt", "hashed"))
 
-        userResource.add(UserDto("creatingUser", "pass"))
+        userResource.add(UserDto("user", "pass"))
 
-        verify(userDao).add(User("creatingUser", "hashed", "salt", "USER", Instant.now(clock)))
+        verify(userDao).add(User("user", "hashed", "salt", "USER", Instant.now(clock)))
     }
 }
