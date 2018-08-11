@@ -7,13 +7,11 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import java.net.URI
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import java.util.*
 import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
 
 class BookResourceTest {
 
@@ -25,7 +23,7 @@ class BookResourceTest {
 
     @Before
     fun setup() {
-        bookResource = BookResource(bookDao, clock, hasher)
+        bookResource = BookResource(bookDao, hasher)
     }
 
     @Test(expected = NotFoundException::class)
@@ -56,21 +54,4 @@ class BookResourceTest {
                 , "ID")).isEqualTo(book)
     }
 
-    @Test
-    fun adding() {
-        `when`(hasher.encode(1)).thenReturn("ID")
-        val book = Book("ID", "john", "Kotlin for dummies", "Mark T. Narrow", "1234",
-                "good, manual", clock.instant(), "http://something")
-        `when`(bookDao.add("john",
-                clock.instant(),
-                book))
-                .thenReturn(1)
-
-        val response =
-                bookResource.add(User("john", "pass", "salt", "USER", clock.instant()),
-                        book)
-
-        assertThat(response.statusInfo).isEqualTo(Response.Status.CREATED)
-        assertThat(response.headers["Location"]!!.first()).isEqualTo(URI.create("books/ID"))
-    }
 }
