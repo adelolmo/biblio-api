@@ -18,6 +18,6 @@ class BookResource(
         val bookId = hasher.decode(id)
                 .orElseThrow { throw NotFoundException("book with id $id not found") }
         return bookDao.get(user.username, bookId)
-                ?: throw NotFoundException("book with id $id not found")
+                .orElseThrow { throw NotFoundException("book with id $id not found") }
     }
 }

@@ -10,11 +10,12 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery
 import org.jdbi.v3.sqlobject.statement.SqlUpdate
 import java.sql.ResultSet
 import java.time.Instant
+import java.util.*
 
 interface BookDao {
 
     @SqlQuery("select * from books where username=:username and id=:id")
-    fun get(@Bind("username") username: String, @Bind("id") id: Long): Book?
+    fun get(@Bind("username") username: String, @Bind("id") id: Long): Optional<Book>
 
     @SqlQuery("select * from books where username=:username")
     fun getAll(@Bind("username") username: String): List<Book>
