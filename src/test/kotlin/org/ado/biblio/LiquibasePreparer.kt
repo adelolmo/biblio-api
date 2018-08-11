@@ -12,9 +12,8 @@ import javax.sql.DataSource
 
 class LiquibasePreparer(private val migrationFile: String) : DatabasePreparer {
     override fun prepare(ds: DataSource) {
-        var postgres: Database? = null
+        val postgres: Database = PostgresDatabase()
         try {
-            postgres = PostgresDatabase()
             val connection = ds.connection
             val jdbcConnection = JdbcConnection(connection)
             postgres.connection = jdbcConnection
@@ -23,12 +22,10 @@ class LiquibasePreparer(private val migrationFile: String) : DatabasePreparer {
         } catch (e: LiquibaseException) {
             throw IllegalStateException("Failed to execute migrations!", e)
         } finally {
-            if (postgres != null) {
-                try {
-                    postgres.close()
-                } catch (e: DatabaseException) {
-                    throw IllegalStateException("Failed to close database!", e)
-                }
+            try {
+                postgres.close()
+            } catch (e: DatabaseException) {
+                throw IllegalStateException("Failed to close database!", e)
             }
         }
     }
