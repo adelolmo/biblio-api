@@ -1,15 +1,22 @@
 package org.ado.biblio
 
+import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.http.ContentType
 import com.jayway.restassured.response.ValidatableResponse
 import org.hamcrest.CoreMatchers.*
+import org.junit.Before
 import org.junit.Test
 import java.util.*
 
 class UseCaseIT {
 
-    private val baseUrl: String = "http://localhost:18090"
+    private val baseUrl: String = "https://localhost:18090"
+
+    @Before
+    fun setup() {
+        RestAssured.useRelaxedHTTPSValidation()
+    }
 
     @Test
     fun creatingUser() {
@@ -26,6 +33,7 @@ class UseCaseIT {
         val response = createSession(username)
         response.statusCode(`is`(201))
         response.header("Authorization", notNullValue())
+        response.header("Location", startsWith("$baseUrl/sessions/"))
     }
 
     @Test
@@ -37,7 +45,7 @@ class UseCaseIT {
 
         val response = createBook(session)
         response.statusCode(`is`(201))
-        response.header("Location", startsWith("$baseUrl/books"))
+        response.header("Location", startsWith("$baseUrl/books/"))
     }
 
     @Test

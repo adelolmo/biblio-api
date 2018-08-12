@@ -28,11 +28,12 @@ import org.ado.biblio.lend.LendDao
 import org.ado.biblio.lend.LendResource
 import org.ado.biblio.sessions.SessionDao
 import org.ado.biblio.sessions.SessionResource
-import org.ado.biblio.shared.BookHasher
+import org.ado.biblio.sessions.SessionsResource
+import org.ado.biblio.shared.BookIdHasher
 import org.ado.biblio.users.DefaultPasswordHasher
 import org.ado.biblio.users.User
 import org.ado.biblio.users.UserDao
-import org.ado.biblio.users.UserResource
+import org.ado.biblio.users.UsersResource
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 import org.hashids.Hashids
 import org.jdbi.v3.postgres.PostgresPlugin
@@ -64,7 +65,7 @@ class Application : io.dropwizard.Application<Configuration>() {
     override fun run(configuration: Configuration, environment: Environment) {
         val clock = Clock.systemUTC()
         val hashids = Hashids("Hash in biblio", 10)
-        val hasher = BookHasher(hashids)
+        val hasher = BookIdHasher(hashids)
         val passwordHasher = DefaultPasswordHasher()
 
         val jdbi = JdbiFactory().build(environment, configuration.dataSourceFactory, "$name-db")
@@ -94,8 +95,9 @@ class Application : io.dropwizard.Application<Configuration>() {
         environment.jersey().register(RolesAllowedDynamicFeature::class.java)
         environment.jersey().register(AuthValueFactoryProvider.Binder<User>(User::class.java))
 
-        environment.jersey().register(UserResource(userDao, clock, passwordHasher))
-        environment.jersey().register(SessionResource(sessionDao, userDao, clock, passwordHasher))
+        environment.jersey().register(UsersResource(userDao, clock, passwordHasher))
+        environment.jersey().register(SessionResource(sessionDao))
+        environment.jersey().register(SessionsResource(sessionDao, userDao, clock, passwordHasher))
         environment.jersey().register(BookResource(bookDao, hasher))
         environment.jersey().register(BooksResource(bookDao, hasher, clock))
         environment.jersey().register(LendResource(library, hasher))

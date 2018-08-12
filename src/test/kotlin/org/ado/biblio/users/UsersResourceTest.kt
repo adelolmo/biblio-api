@@ -8,23 +8,23 @@ import java.time.Instant
 import java.time.ZoneId
 import javax.ws.rs.NotFoundException
 
-class UserResourceTest {
+class UsersResourceTest {
 
     private val userDao: UserDao = mock(UserDao::class.java)
     private val clock: Clock = Clock.fixed(Instant.ofEpochMilli(0), ZoneId.of("UTC"))
     private val passwordHasher: PasswordHasher = mock(PasswordHasher::class.java)
-    private lateinit var userResource: UserResource
+    private lateinit var usersResource: UsersResource
 
     @Before
     fun setup() {
-        userResource = UserResource(userDao, clock, passwordHasher)
+        usersResource = UsersResource(userDao, clock, passwordHasher)
     }
 
     @Test(expected = NotFoundException::class)
     fun addingExistingUser() {
         `when`(userDao.exists("user")).thenReturn(true)
 
-        userResource.add(UserDto("user", "pass"))
+        usersResource.add(UserDto("user", "pass"))
 
         verify(userDao).exists("user")
         verifyNoMoreInteractions(userDao)
@@ -36,7 +36,7 @@ class UserResourceTest {
         `when`(passwordHasher.encode("pass"))
                 .thenReturn(PasswordHashed("salt", "hashed"))
 
-        userResource.add(UserDto("user", "pass"))
+        usersResource.add(UserDto("user", "pass"))
 
         verify(userDao).add(User("user", "hashed", "salt", "USER", Instant.now(clock)))
     }

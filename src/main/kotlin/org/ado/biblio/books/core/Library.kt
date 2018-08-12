@@ -10,8 +10,7 @@ import javax.ws.rs.NotFoundException
 class Library(
         private val lendDao: LendDao,
         private val bookDao: BookDao,
-        private val clock: Clock
-) {
+        private val clock: Clock) {
 
     fun lend(username: String, bookId: Long, person: String) {
         if (!bookDao.exists(username, bookId)) {

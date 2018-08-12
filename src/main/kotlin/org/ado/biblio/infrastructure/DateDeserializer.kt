@@ -18,8 +18,7 @@ class DateDeserializer(t: Class<Date>) : StdDeserializer<Date>(t) {
         try {
             return df.parse(text)
         } catch (e: ParseException) {
-            throw IllegalArgumentException(String.format("%s must be of format ISO 8601.", jp.currentName))
+            throw IllegalArgumentException("${jp.currentName} must be of format ISO 8601.")
         }
-
     }
 }

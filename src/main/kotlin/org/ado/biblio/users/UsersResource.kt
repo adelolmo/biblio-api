@@ -12,11 +12,10 @@ import javax.ws.rs.core.Response
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class UserResource(
+class UsersResource(
         private val userDao: UserDao,
         private val clock: Clock,
-        private val passwordHasher: PasswordHasher
-) {
+        private val passwordHasher: PasswordHasher) {
 
     @POST
     fun add(@Valid @NotNull user: UserDto): Response {

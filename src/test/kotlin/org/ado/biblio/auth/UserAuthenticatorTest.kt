@@ -20,7 +20,7 @@ class UserAuthenticatorTest {
     private val userDao: UserDao = mock(UserDao::class.java)
     private val sessionDao: SessionDao = mock(SessionDao::class.java)
     private val clock: Clock = Clock.fixed(Instant.ofEpochMilli(0), ZoneId.of("UTC"))
-    lateinit var userAuthenticator: UserAuthenticator
+    private lateinit var userAuthenticator: UserAuthenticator
 
     @Before
     fun setup() {

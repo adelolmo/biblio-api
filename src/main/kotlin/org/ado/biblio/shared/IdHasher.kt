@@ -4,12 +4,12 @@ import org.hashids.Hashids
 import java.util.*
 
 
-interface Hasher {
+interface IdHasher {
     fun encode(number: Long): String
     fun decode(id: String): Optional<Long>
 }
 
-class BookHasher(val hashids: Hashids) : Hasher {
+class BookIdHasher(val hashids: Hashids) : IdHasher {
 
     override fun encode(number: Long): String {
         return hashids.encode(number)

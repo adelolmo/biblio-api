@@ -1,7 +1,7 @@
 package org.ado.biblio.books
 
 import io.dropwizard.auth.Auth
-import org.ado.biblio.shared.Hasher
+import org.ado.biblio.shared.IdHasher
 import org.ado.biblio.users.User
 import java.time.Clock
 import java.time.Instant
@@ -16,7 +16,7 @@ import javax.ws.rs.core.UriBuilder
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 class BooksResource(private val bookDao: BookDao,
-                    private val hasher: Hasher,
+                    private val idHasher: IdHasher,
                     private val clock: Clock) {
 
     @GET
@@ -29,7 +29,7 @@ class BooksResource(private val bookDao: BookDao,
         val id = bookDao.add(user.username, Instant.now(clock), book)
         return Response.created(
                 UriBuilder.fromResource(BookResource::class.java)
-                        .resolveTemplate("id", hasher.encode(id)).build())
+                        .resolveTemplate("id", idHasher.encode(id)).build())
                 .build()
     }
 }

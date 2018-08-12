@@ -12,7 +12,7 @@ import javax.ws.rs.NotFoundException
 class IsbnSearchResourceTest {
 
     private val googleBooksDaoDao: GoogleBooksDao = mock(GoogleBooksDao::class.java)
-    lateinit var isbnSearchResource: IsbnSearchResource
+    private lateinit var isbnSearchResource: IsbnSearchResource
 
     @Before
     fun setup() {
@@ -51,7 +51,6 @@ class IsbnSearchResourceTest {
                         listOf(GoogleBooksApi.Item("books#volume", "id", "etag", "url", volumeInfo)))))
 
         assertThat(isbnSearchResource.get("kotlin").books)
-                .containsOnly(Book(null, null, "Title", "Mark T.", "13", null, null, "normal"))
+                .containsOnly(Book.of("Title", "Mark T.", "13", "normal"))
     }
-
 }

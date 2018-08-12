@@ -1,6 +1,6 @@
 package org.ado.biblio.books
 
-import org.ado.biblio.shared.Hasher
+import org.ado.biblio.shared.IdHasher
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext
 import org.jdbi.v3.sqlobject.customizer.Bind
@@ -31,9 +31,9 @@ interface BookDao {
     @SqlQuery("select exists(select 1 from books where username=:username and id=:id)")
     fun exists(@Bind("username") username: String, @Bind("id") id: Long): Boolean
 
-    class BookMapper(val hasher: Hasher) : RowMapper<Book> {
+    class BookMapper(val idHasher: IdHasher) : RowMapper<Book> {
         override fun map(rs: ResultSet, ctx: StatementContext): Book {
-            return Book(hasher.encode(rs.getLong("id")),
+            return Book(idHasher.encode(rs.getLong("id")),
                     rs.getString("username"),
                     rs.getString("title"),
                     rs.getString("author"),

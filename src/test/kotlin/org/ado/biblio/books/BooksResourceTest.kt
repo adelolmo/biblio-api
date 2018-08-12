@@ -1,6 +1,6 @@
 package org.ado.biblio.books
 
-import org.ado.biblio.shared.Hasher
+import org.ado.biblio.shared.IdHasher
 import org.ado.biblio.users.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -22,17 +22,17 @@ class BooksResourceTest {
     private val bookDao: BookDao = Mockito.mock(BookDao::class.java)
     private val clock: Clock = Clock
             .fixed(Instant.ofEpochMilli(0), ZoneId.of("UTC"))
-    private val hasher: Hasher = Mockito.mock(Hasher::class.java)
-    lateinit var booksResource: BooksResource
+    private val idHasher: IdHasher = Mockito.mock(IdHasher::class.java)
+    private lateinit var booksResource: BooksResource
 
     @Before
     fun setup() {
-        booksResource = BooksResource(bookDao, hasher, clock)
+        booksResource = BooksResource(bookDao, idHasher, clock)
     }
 
     @Test
     fun adding() {
-        `when`(hasher.encode(1)).thenReturn("ID")
+        `when`(idHasher.encode(1)).thenReturn("ID")
         val book = Book("ID", "john", "Kotlin for dummies", "Mark T. Narrow", "1234",
                 "good, manual", clock.instant(), "http://something")
         `when`(bookDao.add("john",

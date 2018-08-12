@@ -1,6 +1,6 @@
 package org.ado.biblio.books
 
-import org.ado.biblio.shared.Hasher
+import org.ado.biblio.shared.IdHasher
 import org.ado.biblio.users.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -18,17 +18,17 @@ class BookResourceTest {
     private val bookDao: BookDao = mock(BookDao::class.java)
     private val clock: Clock = Clock
             .fixed(Instant.ofEpochMilli(0), ZoneId.of("UTC"))
-    private val hasher: Hasher = mock(Hasher::class.java)
-    lateinit var bookResource: BookResource
+    private val idHasher: IdHasher = mock(IdHasher::class.java)
+    private lateinit var bookResource: BookResource
 
     @Before
     fun setup() {
-        bookResource = BookResource(bookDao, hasher)
+        bookResource = BookResource(bookDao, idHasher)
     }
 
     @Test(expected = NotFoundException::class)
     fun gettingWrongHash() {
-        `when`(hasher.decode("ID")).thenThrow(NotFoundException())
+        `when`(idHasher.decode("ID")).thenThrow(NotFoundException())
 
         bookResource.get(User("john", "pass", "salt", "USER", clock.instant())
                 , "ID")
@@ -36,7 +36,7 @@ class BookResourceTest {
 
     @Test(expected = NotFoundException::class)
     fun gettingBookNotFound() {
-        `when`(hasher.decode("ID")).thenReturn(Optional.of(1))
+        `when`(idHasher.decode("ID")).thenReturn(Optional.of(1))
         `when`(bookDao.get("john", 1)).thenThrow(NotFoundException())
 
         bookResource.get(User("john", "pass", "salt", "USER", clock.instant())
@@ -45,7 +45,7 @@ class BookResourceTest {
 
     @Test
     fun getting() {
-        `when`(hasher.decode("ID")).thenReturn(Optional.of(1))
+        `when`(idHasher.decode("ID")).thenReturn(Optional.of(1))
         val book = Book("ID", "john", "Kotlin for dummies", "Mark T. Narrow", "1234",
                 "good, manual", clock.instant(), "http://something")
         `when`(bookDao.get("john", 1)).thenReturn(Optional.of(book))
