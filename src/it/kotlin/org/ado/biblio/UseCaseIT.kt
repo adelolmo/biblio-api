@@ -5,7 +5,8 @@ import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.http.ContentType
 import com.jayway.restassured.response.ValidatableResponse
 import org.hamcrest.CoreMatchers.*
-import org.junit.Before
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Test
 import java.util.*
 
@@ -13,9 +14,24 @@ class UseCaseIT {
 
     private val baseUrl: String = "https://localhost:18090"
 
-    @Before
-    fun setup() {
-        RestAssured.useRelaxedHTTPSValidation()
+    companion object {
+        private val vagrant = Vagrant()
+
+        init {
+            RestAssured.useRelaxedHTTPSValidation()
+        }
+
+        @BeforeClass
+        @JvmStatic
+        fun setup() {
+            vagrant.start()
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun tearDown() {
+            vagrant.stop()
+        }
     }
 
     @Test
