@@ -13,46 +13,16 @@ import java.util.concurrent.TimeUnit
  */
 class Vagrant {
 
-    private val logger = LoggerFactory.getLogger(Vagrant::class.java)
+    private val logger = LoggerFactory.getLogger("vagrant")
 
     fun start() {
-        logger.info("starting vagrant...")
-        val retrofit = Retrofit.Builder()
-                .baseUrl("http://localhost:18091/")
-                .build()
-        val healthCheckApi = retrofit.create(HealthCheckApi::class.java)
-        val healthCheckDao = HealthCheckDao(healthCheckApi)
-
-        val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "up"))
-        try {
-            val statusCode = process.waitFor()
-            val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
-            if (statusCode != 0)
-                logger.info("process status code $statusCode")
-            if ("" != error) {
-                logger.error("error $error")
-                throw IOException("Cannot start vagrant.")
-            }
-            while (!healthCheckDao.isApplicationRunning()) {
-                logger.info("waiting for application to start...")
-                try {
-                    TimeUnit.SECONDS.sleep(1)
-                } catch (e: Exception) {
-                    Thread.currentThread().interrupt()
-                }
-            }
-            logger.info("vagrant started.")
-
-        } catch (e: Exception) {
-            throw IOException("Cannot start vagrant.", e)
-        } finally {
-            process.destroy()
-        }
+        up()
+        provision()
     }
 
     fun stop() {
         logger.info("stopping vagrant...")
-        val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "halt"))
+        val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "suspend"))
         try {
             val statusCode = process.waitFor()
             val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
@@ -66,6 +36,62 @@ class Vagrant {
 
         } catch (e: Exception) {
             throw IOException("Cannot stop vagrant.", e)
+        } finally {
+            process.destroy()
+        }
+    }
+
+    private fun up() {
+        logger.info("starting vagrant...")
+        val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "up"))
+        try {
+            val statusCode = process.waitFor()
+            val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
+            if (statusCode != 0)
+                logger.info("process status code $statusCode")
+            if ("" != error) {
+                logger.error("error $error")
+                throw IOException("Cannot start vagrant.")
+            }
+            logger.info("vagrant started.")
+
+        } catch (e: Exception) {
+            throw IOException("Cannot start vagrant.", e)
+        } finally {
+            process.destroy()
+        }
+    }
+
+    private fun provision() {
+        logger.info("provisioning vagrant...")
+        val retrofit = Retrofit.Builder()
+                .baseUrl("http://localhost:18091/")
+                .build()
+        val healthCheckApi = retrofit.create(HealthCheckApi::class.java)
+        val healthCheckDao = HealthCheckDao(healthCheckApi)
+
+        val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "provision"))
+        try {
+            val statusCode = process.waitFor()
+            val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
+            if (statusCode != 0)
+                logger.info("process status code $statusCode")
+            if ("" != error) {
+                logger.error("error $error")
+                throw IOException("Cannot provision vagrant.")
+            }
+            while (!healthCheckDao.isApplicationRunning()) {
+                logger.info("waiting for application to start...")
+                try {
+                    TimeUnit.SECONDS.sleep(1)
+                } catch (e: Exception) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+            logger.info("vagrant provisioned.")
+
+        } catch (e: Exception) {
+            throw IOException("Cannot start vagrant.", e)
         } finally {
             process.destroy()
         }

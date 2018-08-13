@@ -3,11 +3,11 @@ server:
     appenders: []
 
   applicationConnectors:
-  - type: https
+    - type: https
       port: 8090
-    keyStorePath: /var/opt/biblio-api/keystore.jks
-    keyStorePassword: ZTAyMzk0NTk1MWJiOWF
-    validateCerts: false
+      keyStorePath: /var/opt/biblio-api/keystore.jks
+      keyStorePassword: ZTAyMzk0NTk1MWJiOWF
+      validateCerts: false
   adminConnectors:
     - type: http
       port: 8091
