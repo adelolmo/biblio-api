@@ -23,6 +23,8 @@
 
         <junit.version>4.12</junit.version>
         <postgresql.embedded.version>0.12.0</postgresql.embedded.version>
+
+        <run.it>false</run.it>
     </properties>
 
     <dependencyManagement>
@@ -369,7 +371,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/deb/lib</src>
+                                    <src>deb/lib</src>
                                     <type>directory</type>
                                     <mapper>
                                         <type>perm</type>

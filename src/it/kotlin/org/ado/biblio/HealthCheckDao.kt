@@ -7,6 +7,10 @@ package org.ado.biblio
 class HealthCheckDao(private val healthCheckApi: HealthCheckApi) {
 
     fun isApplicationRunning(): Boolean {
-        return healthCheckApi.check().execute().isSuccessful
+        return try {
+            healthCheckApi.check().execute().isSuccessful
+        } catch (e: Exception) {
+            false
+        }
     }
 }

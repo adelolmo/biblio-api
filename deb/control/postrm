@@ -8,6 +8,7 @@ case "$1" in
     purge)
         echo "Removing \`biblio-api' user ..."
         userdel biblio-api > /dev/null 2>&1
+        rm -rf /var/opt/biblio-api
     ;;
 
     disappear|upgrade|failed-upgrade|abort-install|abort-upgrade)

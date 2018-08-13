@@ -3,6 +3,6 @@ Version: [[version]]
 Section: service
 Priority: low
 Architecture: all
-Depends: oracle-java8-jdk
+Depends: oracle-java8-jdk, openssl
 Description: [[description]]
 Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>

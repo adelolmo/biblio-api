@@ -1,5 +1,4 @@
 #!/bin/sh -e
-
 echo "preinst: $@"
 
 case "$1" in

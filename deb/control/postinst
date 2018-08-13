@@ -1,19 +1,31 @@
 #!/bin/sh -e
-
 echo "postinst: $@"
 
 case "$1" in
     configure|reconfigure)
         if [ -z $2 ]; then
             echo 'Creating biblio-api user ...'
-            adduser --system --gecos "Keep your personal physical library organized" --disabled-password --group --no-create-home biblio-api > /dev/null 2>&1
+            adduser --system --gecos "Keep your personal physical library organized" --disabled-password --group \
+            --no-create-home biblio-api > /dev/null 2>&1
             echo 'User created.'
 
             echo 'Creating database and user ...'
             su postgres -c "psql -c \"CREATE DATABASE biblio;\""
-            su postgres -c "psql -c \"CREATE USER biblio WITH ENCRYPTED PASSWORD 'biblio';\""
+            su postgres -c "psql -c \"CREATE USER biblio WITH ENCRYPTED PASSWORD 'ODM4ZGQ2NmNiZmI';\""
             su postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE biblio TO biblio;\""
             echo 'Database and user created.'
+
+            echo 'Creating Java Key Store from letsencrypt...'
+            mkdir -p /var/opt/biblio-api
+            openssl pkcs12 -export -in /etc/letsencrypt/live/$(hostname)/fullchain.pem \
+            -inkey /etc/letsencrypt/live/$(hostname)/privkey.pem -out /var/opt/biblio-api/pkcs.p12 -name biblio-api \
+            -password pass:ZTAyMzk0NTk1MWJiOWF
+            keytool -importkeystore -deststorepass ZTAyMzk0NTk1MWJiOWF -destkeypass ZTAyMzk0NTk1MWJiOWF \
+            -destkeystore /var/opt/biblio-api/keystore.jks -srckeystore /var/opt/biblio-api/pkcs.p12 -srcstoretype PKCS12 \
+            -srcstorepass ZTAyMzk0NTk1MWJiOWF -alias biblio-api
+            chown -R biblio-api.biblio-api /var/opt/biblio-api
+            chmod -R 0400 /var/opt/biblio-api/*
+            echo 'Java Key Store created.'
         fi
         systemctl daemon-reload
         systemctl enable biblio-api

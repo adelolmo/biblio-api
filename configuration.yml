@@ -3,8 +3,11 @@ server:
     appenders: []
 
   applicationConnectors:
-    - type: http
+  - type: https
       port: 8090
+    keyStorePath: /var/opt/biblio-api/keystore.jks
+    keyStorePassword: ZTAyMzk0NTk1MWJiOWF
+    validateCerts: false
   adminConnectors:
     - type: http
       port: 8091
@@ -12,7 +15,7 @@ server:
 database:
   driverClass: org.postgresql.Driver
   user: biblio
-  password: biblio
+  password: ODM4ZGQ2NmNiZmI
   url: jdbc:postgresql://localhost:5432/biblio
   properties:
     charSet: UTF-8

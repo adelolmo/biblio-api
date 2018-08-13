@@ -28,10 +28,10 @@ class Vagrant {
             val statusCode = process.waitFor()
             val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
             if (statusCode != 0)
-                logger.info("process status code {}", statusCode)
+                logger.info("process status code $statusCode")
             if ("" != error) {
-                logger.info("error $error")
-                throw IOException("Cannot start vagrant VM.")
+                logger.error("error $error")
+                throw IOException("Cannot start vagrant.")
             }
             while (!healthCheckDao.isApplicationRunning()) {
                 logger.info("waiting for application to start...")
@@ -41,9 +41,10 @@ class Vagrant {
                     Thread.currentThread().interrupt()
                 }
             }
+            logger.info("vagrant started.")
 
         } catch (e: Exception) {
-            throw IOException("Cannot start vagrant VM.", e)
+            throw IOException("Cannot start vagrant.", e)
         } finally {
             process.destroy()
         }
@@ -56,14 +57,15 @@ class Vagrant {
             val statusCode = process.waitFor()
             val error = IOUtils.toString(process.errorStream, StandardCharsets.UTF_8)
             if (statusCode != 0)
-                logger.info("process status code {}", statusCode)
+                logger.info("process status code $statusCode")
             if ("" != error) {
-                logger.info("error $error")
-                throw IOException("Cannot stop vagrant VM.")
+                logger.error("error $error")
+                throw IOException("Cannot stop vagrant.")
             }
+            logger.info("vagrant stopped.")
 
         } catch (e: Exception) {
-            throw IOException("Cannot stop vagrant VM.", e)
+            throw IOException("Cannot stop vagrant.", e)
         } finally {
             process.destroy()
         }

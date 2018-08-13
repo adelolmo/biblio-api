@@ -1,6 +1,4 @@
-#!/bin/sh
-
-set -e
+#!/bin/sh -e
 echo "prerm: $@"
 
 case "$1" in
