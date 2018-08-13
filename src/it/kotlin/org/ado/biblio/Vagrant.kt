@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
  */
 class Vagrant {
 
-    private val logger = LoggerFactory.getLogger("vagrant")
+    private val logger = LoggerFactory.getLogger(Vagrant::class.java)
 
     fun start() {
         up()
