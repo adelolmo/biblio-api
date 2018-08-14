@@ -81,7 +81,7 @@ class Application : io.dropwizard.Application<Configuration>() {
                 .addConverterFactory(JacksonConverterFactory.create(environment.objectMapper))
                 .build()
         val googleBooksApi = retrofit.create(GoogleBooksApi::class.java)
-        val googleBooksDao = DefaultGoogleBooksDao(googleBooksApi)
+        val googleBooksDao = DefaultGoogleBooksDao(googleBooksApi, configuration.googleBooksCountry)
 
         val library = Library(lendDao, bookDao, clock)
 
@@ -105,4 +105,5 @@ class Application : io.dropwizard.Application<Configuration>() {
     }
 }
 
-class Configuration(@JsonProperty("database") val dataSourceFactory: DataSourceFactory) : io.dropwizard.Configuration()
+class Configuration(@JsonProperty("database") val dataSourceFactory: DataSourceFactory,
+                    @JsonProperty("googleBooksCountry") val googleBooksCountry: String) : io.dropwizard.Configuration()

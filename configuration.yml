@@ -1,3 +1,5 @@
+googleBooksCountry: DE
+
 server:
   requestLog:
     appenders: []

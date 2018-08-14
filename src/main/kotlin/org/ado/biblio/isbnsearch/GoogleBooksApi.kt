@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface GoogleBooksApi {
 
     @GET("volumes")
-    fun get(@Query("q") q: String): Call<Volumes>
+    fun get(@Query("q") q: String, @Query("country") country: String): Call<Volumes>
 
     data class Volumes(val kind: String,
                        val totalItems: Int,
