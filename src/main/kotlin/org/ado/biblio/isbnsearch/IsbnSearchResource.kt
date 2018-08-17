@@ -12,16 +12,16 @@ import javax.ws.rs.core.MediaType
 class IsbnSearchResource(private val googleBooksDaoDao: GoogleBooksDao) {
 
     @GET
-    fun get(@QueryParam("q") q: String): BooksDto {
+    fun get(@QueryParam("q") isbn: String): BooksDto {
         val volumes =
-                googleBooksDaoDao.get(q).orElseThrow { NotFoundException("no book found for search query $q") }
+                googleBooksDaoDao.get(isbn).orElseThrow { NotFoundException("no book found with isbn: $isbn") }
 
         return BooksDto(volumes.items.stream()
-                .map { i ->
-                    Book.of(i.volumeInfo.title,
-                            i.volumeInfo.authors.stream().collect(Collectors.joining(",")),
-                            isbn(i.volumeInfo.industryIdentifiers),
-                            i.volumeInfo.imageLinks.thumbnail)
+                .map {
+                    Book.of(it.volumeInfo.title,
+                            it.volumeInfo.authors.stream().collect(Collectors.joining(",")),
+                            isbn(it.volumeInfo.industryIdentifiers),
+                            it.volumeInfo.imageLinks.thumbnail)
                 }.collect(Collectors.toList()))
     }
 
