@@ -1,4 +1,4 @@
-package org.ado.biblio
+package org.ado.biblio.vagrant
 
 import retrofit2.Call
 import retrofit2.http.GET

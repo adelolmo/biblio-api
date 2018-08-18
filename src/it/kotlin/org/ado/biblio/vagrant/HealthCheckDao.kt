@@ -1,4 +1,4 @@
-package org.ado.biblio
+package org.ado.biblio.vagrant
 
 /**
  * @author Andoni del Olmo

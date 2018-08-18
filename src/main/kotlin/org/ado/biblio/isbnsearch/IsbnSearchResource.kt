@@ -1,7 +1,9 @@
 package org.ado.biblio.isbnsearch
 
+import io.dropwizard.auth.Auth
 import org.ado.biblio.books.Book
 import org.ado.biblio.books.BooksDto
+import org.ado.biblio.users.User
 import java.util.stream.Collectors
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
@@ -12,7 +14,7 @@ import javax.ws.rs.core.MediaType
 class IsbnSearchResource(private val googleBooksDaoDao: GoogleBooksDao) {
 
     @GET
-    fun get(@QueryParam("q") isbn: String): BooksDto {
+    fun get(@Auth user: User, @QueryParam("q") isbn: String): BooksDto {
         val volumes =
                 googleBooksDaoDao.get(isbn).orElseThrow { NotFoundException("no book found with isbn: $isbn") }
 

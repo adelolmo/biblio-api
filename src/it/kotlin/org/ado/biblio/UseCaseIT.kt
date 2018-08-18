@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.http.ContentType
 import com.jayway.restassured.response.ValidatableResponse
+import org.ado.biblio.vagrant.Vagrant
 import org.hamcrest.CoreMatchers.*
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -119,6 +120,18 @@ class UseCaseIT {
                 .then()
                 .statusCode(202)
     }
+
+/*    @Test
+    fun shouldFindBookSearchingByIsbn(){
+        given()
+                .request()
+                .contentType(ContentType.JSON)
+                .headers("Authorization", session)
+                .`when`()
+                .delete("$baseUrl/books/$bookId/lends")
+                .then()
+                .statusCode(202)
+    }*/
 
     private fun createUser(username: UUID): ValidatableResponse {
         return given()

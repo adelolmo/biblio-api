@@ -1,4 +1,4 @@
-package org.ado.biblio
+package org.ado.biblio.vagrant
 
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
