@@ -6,6 +6,7 @@ import org.ado.biblio.users.User
 import org.ado.biblio.users.UserDao
 import java.time.Clock
 import java.util.*
+import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
 
 class UserAuthenticator(private val userDao: UserDao,
@@ -13,9 +14,9 @@ class UserAuthenticator(private val userDao: UserDao,
                         private val clock: Clock) : Authenticator<Token, User> {
 
     override fun authenticate(credentials: Token): Optional<User> {
-        val session = sessionDao.get(credentials.value).orElseThrow { NotFoundException("session not found") }
+        val session = sessionDao.get(credentials.value).orElseThrow { NotAuthorizedException("session not found") }
         if (session.expiresAt.isBefore(clock.instant())) {
-            throw NotFoundException("session not found")
+            throw NotAuthorizedException("session expired")
         }
         return Optional.of(userDao.get(session.username).orElseThrow { NotFoundException("user not found") })
     }
