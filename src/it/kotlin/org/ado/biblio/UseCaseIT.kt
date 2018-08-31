@@ -121,17 +121,27 @@ class UseCaseIT {
                 .statusCode(202)
     }
 
-/*    @Test
-    fun shouldFindBookSearchingByIsbn(){
+    @Test
+    fun shouldFindBookSearchingByIsbn() {
+        val username = UUID.randomUUID()
+        createUser(username)
+        val sessionResponse = createSession(username)
+        val session = sessionResponse.extract().header("Authorization")
+
         given()
                 .request()
                 .contentType(ContentType.JSON)
                 .headers("Authorization", session)
                 .`when`()
-                .delete("$baseUrl/books/$bookId/lends")
+                .get("$baseUrl/isbnsearch?q=9783836958189")
                 .then()
-                .statusCode(202)
-    }*/
+                .statusCode(200)
+                .body("books[0].title", equalTo("Aschenputtel"))
+                .body("books[0].author", equalTo("Charles Perrault,Roberto Innocenti"))
+                .body("books[0].isbn", equalTo("9783836958189"))
+                .body("books[0].imageUrl",
+                        equalTo("http://books.google.com/books/content?id=lF91oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"))
+    }
 
     private fun createUser(username: UUID): ValidatableResponse {
         return given()

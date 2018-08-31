@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 
 /**
@@ -29,8 +30,7 @@ class Vagrant {
             if (statusCode != 0)
                 logger.info("process status code $statusCode")
             if ("" != error) {
-                logger.error("error $error")
-                throw IOException("Cannot stop vagrant.")
+                throw IOException("Cannot stop vagrant. $error")
             }
             logger.info("vagrant stopped.")
 
@@ -42,7 +42,10 @@ class Vagrant {
     }
 
     private fun up() {
-        logger.info("starting vagrant...")
+        when {
+            Paths.get(".vagrant").toFile().exists() -> logger.info("starting vagrant...")
+            else -> logger.info("starting and provisioning vagrant (this process can take up to several minutes)...")
+        }
         val process = Runtime.getRuntime().exec(arrayOf("/usr/bin/vagrant", "up"))
         try {
             val statusCode = process.waitFor()
@@ -50,8 +53,7 @@ class Vagrant {
             if (statusCode != 0)
                 logger.info("process status code $statusCode")
             if ("" != error) {
-                logger.error("error $error")
-                throw IOException("Cannot start vagrant.")
+                throw IOException("Cannot start vagrant. $error")
             }
             logger.info("vagrant started.")
 
@@ -77,8 +79,7 @@ class Vagrant {
             if (statusCode != 0)
                 logger.info("process status code $statusCode")
             if ("" != error) {
-                logger.error("error $error")
-                throw IOException("Cannot provision vagrant.")
+                throw IOException("Cannot provision vagrant. $error")
             }
             while (!healthCheckDao.isApplicationRunning()) {
                 logger.info("waiting for application to start...")
